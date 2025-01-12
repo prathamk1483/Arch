@@ -1,5 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+from docx import Document
+from io import BytesIO
 
 # Create your views here.
 
@@ -167,6 +171,7 @@ def data(request):
             return render(request, 'data.html', {'data': datalist})
     return render(request ,'data.html')
 
+
 def getInvoice(request):
     if request.method == "GET":
         # Extract data from the POST request
@@ -187,3 +192,41 @@ def getInvoice(request):
         return render(request, 'invoice.html', data)
     
     return HttpResponse("Hello Nigga")
+
+def printInvoice(request):
+
+    if request.method == "GET":
+        data = {
+            "firstName": request.GET.get("firstName"),
+            "lastName": request.GET.get("lastName"),
+            "age": request.GET.get("age"),
+            "address": request.GET.get("address"),
+            "city": request.GET.get("city"),
+            "state": request.GET.get("state"),
+            "zipcode": request.GET.get("zipcode"),
+            "phone": request.GET.get("phone"),
+            "TotalBill": request.GET.get("TotalBill"),
+            "AmountPaid": request.GET.get("AmountPaid"),
+            "PlotType": request.GET.get("PlotType"),
+        }
+
+        path = f"{BASE_DIR}/templates/document.docx"
+
+        docfile = Document(path)
+
+        for paragraph in docfile.paragraphs:
+            for key, value in data.items():
+                if f"{{{{ {key} }}}}" in paragraph.text:
+                    paragraph.text = paragraph.text.replace(f"{{{{ {key} }}}}", str(value))
+
+        doc_stream = BytesIO()
+        docfile.save(doc_stream)
+        doc_stream.seek(0)
+
+        # Return the Word document as an HTTP response for download
+        response = HttpResponse(doc_stream, content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        response["Content-Disposition"] = f'attachment; filename="Invoice_{data["firstName"]}_{data["lastName"]}.docx"'
+        return response
+
+    
+    return HttpResponse("Something went wrong")

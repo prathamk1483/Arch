@@ -71,9 +71,9 @@
                 </tr>
             </tbody>
         </table>
-        {% comment %} <a href="{% url '' %}?firstName={{ firstName }}&lastName={{ lastName }}&age={{ age }}&address={{ address }}&city={{ city }}&state={{ state }}&zipcode={{ zipcode }}&phone={{ phone }}&TotalBill={{ TotalBill }}&AmountPaid={{ AmountPaid }}&PlotType={{ PlotType }}"> {% endcomment %}
+        <a href="{% url 'printInvoice' %}?firstName={{ firstName }}&lastName={{ lastName }}&age={{ age }}&address={{ address }}&city={{ city }}&state={{ state }}&zipcode={{ zipcode }}&phone={{ phone }}&TotalBill={{ TotalBill }}&AmountPaid={{ AmountPaid }}&PlotType={{ PlotType }}">
             <button class="btn btn-primary">Print</button>
-        {% comment %} </a> {% endcomment %}
+        </a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
