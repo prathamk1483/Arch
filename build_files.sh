@@ -1,6 +1,6 @@
 ECHO "Deployment started"
 
-python3.13 -m venv env
+python3.12 -m venv env
 
 source env/bin/activate
 
