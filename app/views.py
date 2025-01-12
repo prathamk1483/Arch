@@ -2,12 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
-# from docx import Document
+from docx import Document
 from io import BytesIO
-import aspose.words as aw
-import os
-from spire.doc import Document , FileFormat
-
 
 # Create your views here.
 
@@ -198,8 +194,8 @@ def getInvoice(request):
     return HttpResponse("Hello Nigga")
 
 def printInvoice(request):
+
     if request.method == "GET":
-        # Extract data from GET request
         data = {
             "firstName": request.GET.get("firstName"),
             "lastName": request.GET.get("lastName"),
@@ -214,30 +210,24 @@ def printInvoice(request):
             "PlotType": request.GET.get("PlotType"),
         }
 
-        # Load the Word template
-        template_path = f"{BASE_DIR}/templates/document.docx"
-        document = Document()
-        document.LoadFromFile(template_path)
+        path = f"{BASE_DIR}/templates/document.docx"
 
-        # Replace placeholders in the Word document
-        for key, value in data.items():
-            placeholder = f"{{{{ {key} }}}}"
-            document.Replace(placeholder, str(value) if value else '', False, True)
+        docfile = Document(path)
 
-        # Save the modified document to a temporary file
-        temp_pdf_path = os.path.join(BASE_DIR, "temp_invoice.pdf")
-        document.SaveToFile(temp_pdf_path, FileFormat.PDF)
+        for paragraph in docfile.paragraphs:
+            for key, value in data.items():
+                if f"{{{{ {key} }}}}" in paragraph.text:
+                    paragraph.text = paragraph.text.replace(f"{{{{ {key} }}}}", str(value))
 
-        # Read the PDF file into memory
-        with open(temp_pdf_path, 'rb') as pdf_file:
-            pdf_content = pdf_file.read()
+        doc_stream = BytesIO()
+        docfile.save(doc_stream)
+        doc_stream.seek(0)
 
-        # Delete the temporary PDF file
-        os.remove(temp_pdf_path)
-
-        # Return the PDF as a response
-        response = HttpResponse(pdf_content, content_type="application/pdf")
-        response["Content-Disposition"] = f'attachment; filename="Invoice_{data["firstName"]}_{data["lastName"]}.pdf"'
+        # Return the Word document as an HTTP response for download
+        response = HttpResponse(doc_stream, content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        response["Content-Disposition"] = f'attachment; filename="Invoice_{data["firstName"]}_{data["lastName"]}.docx"'
         return response
 
-    return HttpResponse("Invalid request")
+        return 
+    
+    return HttpResponse("Something went wrong")
