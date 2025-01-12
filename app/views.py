@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
-from docx import Document
 from io import BytesIO
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 # Create your views here.
 
@@ -194,8 +195,8 @@ def getInvoice(request):
     return HttpResponse("Hello Nigga")
 
 def printInvoice(request):
-
     if request.method == "GET":
+        # Extract data from GET request
         data = {
             "firstName": request.GET.get("firstName"),
             "lastName": request.GET.get("lastName"),
@@ -208,26 +209,27 @@ def printInvoice(request):
             "TotalBill": request.GET.get("TotalBill"),
             "AmountPaid": request.GET.get("AmountPaid"),
             "PlotType": request.GET.get("PlotType"),
+            "logo_path": f"{BASE_DIR}/static/logo.png" 
         }
 
-        path = f"{BASE_DIR}/templates/document.docx"
+        # Load the HTML template
+        template = get_template(f'{BASE_DIR}/templates/invtemplate.html')
+        html_content = template.render(data)
 
-        docfile = Document(path)
+        # Generate the PDF
+        pdf_stream = BytesIO()
+        # Create PDF with A4 size
+        pisa_status = pisa.CreatePDF(
+            html_content.encode("UTF-8"), pdf_stream, encoding="UTF-8"
+        )
 
-        for paragraph in docfile.paragraphs:
-            for key, value in data.items():
-                if f"{{{{ {key} }}}}" in paragraph.text:
-                    paragraph.text = paragraph.text.replace(f"{{{{ {key} }}}}", str(value))
+        # Check for errors and return response
+        if pisa_status.err:
+            return HttpResponse("An error occurred while generating the PDF.", status=500)
 
-        doc_stream = BytesIO()
-        docfile.save(doc_stream)
-        doc_stream.seek(0)
-
-        # Return the Word document as an HTTP response for download
-        response = HttpResponse(doc_stream, content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-        response["Content-Disposition"] = f'attachment; filename="Invoice_{data["firstName"]}_{data["lastName"]}.docx"'
+        # Return the PDF as an HTTP response
+        response = HttpResponse(pdf_stream.getvalue(), content_type="application/pdf")
+        response["Content-Disposition"] = f'attachment; filename="Invoice_{data["firstName"]}_{data["lastName"]}.pdf"'
         return response
 
-        return 
-    
-    return HttpResponse("Something went wrong")
+    return HttpResponse("Invalid request")
