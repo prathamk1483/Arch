@@ -1,4 +1,4 @@
-ECHO "Deployment started"
+echo "Deployment started"
 
 python3.12 -m venv env
 
@@ -8,4 +8,4 @@ pip install -r requirements.txt
 
 python manage.py collectstatic --noinput
 
-ECHO "Deployment completed"
+echo "Deployment completed"
