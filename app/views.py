@@ -211,7 +211,7 @@ def printInvoice(request):
             "PlotType": request.GET.get("PlotType"),
             "logo_path": f"{BASE_DIR}/static/logo.png" 
         }
-
+        data['pendingAmount'] = int(data['TotalBill']) - int(data['AmountPaid'])
         # Load the HTML template
         template = get_template(f'{BASE_DIR}/templates/invtemplate.html')
         html_content = template.render(data)

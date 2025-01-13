@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Sparksuite Invoice</title>
+<title>{{firstName}} {{lastName}} Orconix India</title>
 <style>
 body {
   font-family: sans-serif;
@@ -32,7 +32,10 @@ body {
 .invoice-info-right {
   width: 45%;
 }
-
+.invoice-info-right{
+  right: 0;
+  text-align: right;
+}
 .invoice-details {
   margin-bottom: 20px;
 }
@@ -71,24 +74,24 @@ th {
 
 <div class="container">
   <div class="header">
-    <img src="{{logo_path}}" alt="Sparksuite Logo" class="logo">
+    <img src="{{logo_path}}" alt="Orconix India Logo" class="logo">
     <h1>Invoice</h1>
-    <p>Invoice #: 123</p>
+    <p>Invoice #: {{invoiceNumber}}</p>
     <p>Created: January 1, 2023</p>
     <p>Due: February 1, 2023</p>
   </div>
 
   <div class="invoice-info">
     <div class="invoice-info-left">
-      <p>Sparksuite, Inc.</p>
-      <p>12345 Sunny Road</p>
-      <p>Sunnyville, TX 12345</p>
+      <p>Orconix India Pvt.Ltd</p>
+      <p>Inrayaninagar, Bhosari</p>
+      <p>Pune-39, Mh ,India</p>
     </div>
 
     <div class="invoice-info-right">
-      <p>Acme Corp.</p>
-      <p>John Doe</p>
-      <p>john@example.com</p>
+      <p>Regular Customer</p>
+      <p>{{firstName}} {{lastName}}</p>
+      <p>{{firstName}}@example.com</p>
     </div>
   </div>
 
@@ -107,24 +110,18 @@ th {
       </thead>
       <tbody>
         <tr>
-          <td>Website design</td>
-          <td>$300.00</td>
+          <td>Total</td>
+          <td>{{TotalBill}}</td>
         </tr>
         <tr>
-          <td>Hosting (3 months)</td>
-          <td>$75.00</td>
+          <td>Paid</td>
+          <td>{{AmountPaid}}</td>
         </tr>
         <tr>
-          <td>Domain name (1 year)</td>
-          <td>$10.00</td>
+          <td>Pending</td>
+          <td>{{pendingAmount}}</td>
         </tr>
       </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="1"></td>
-          <td class="total">Total: $385.00</td>
-        </tr>
-      </tfoot>
     </table>
   </div>
 
