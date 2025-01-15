@@ -6,5 +6,5 @@ urlpatterns = [
     path('', views.index, name='home'),
     path("data/",views.data,name="data"),
     path("invoice/",views.getInvoice,name="getInvoice"),
-    path("print/",views.printInvoice,name="printInvoice"),
+    # path("print/",views.printInvoice,name="printInvoice"),
 ]

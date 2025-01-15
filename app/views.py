@@ -3,8 +3,7 @@ from django.http import HttpResponse
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 from io import BytesIO
-from django.template.loader import get_template
-from xhtml2pdf import pisa
+
 
 # Create your views here.
 
@@ -188,48 +187,49 @@ def getInvoice(request):
             "TotalBill": request.GET.get("TotalBill"),
             "AmountPaid": request.GET.get("AmountPaid"),
             "PlotType": request.GET.get("PlotType"),
-        }
-    
-        return render(request, 'invoice.html', data)
-    
-    return HttpResponse("Hello Nigga")
-
-def printInvoice(request):
-    if request.method == "GET":
-        # Extract data from GET request
-        data = {
-            "firstName": request.GET.get("firstName"),
-            "lastName": request.GET.get("lastName"),
-            "age": request.GET.get("age"),
-            "address": request.GET.get("address"),
-            "city": request.GET.get("city"),
-            "state": request.GET.get("state"),
-            "zipcode": request.GET.get("zipcode"),
-            "phone": request.GET.get("phone"),
-            "TotalBill": request.GET.get("TotalBill"),
-            "AmountPaid": request.GET.get("AmountPaid"),
-            "PlotType": request.GET.get("PlotType"),
             "logo_path": f"{BASE_DIR}/static/logo.png" 
         }
         data['pendingAmount'] = int(data['TotalBill']) - int(data['AmountPaid'])
-        # Load the HTML template
-        template = get_template(f'{BASE_DIR}/templates/invtemplate.html')
-        html_content = template.render(data)
+        return render(request, 'invtemplate.html', data)
+    
+    return HttpResponse("Hello Nigga")
 
-        # Generate the PDF
-        pdf_stream = BytesIO()
-        # Create PDF with A4 size
-        pisa_status = pisa.CreatePDF(
-            html_content.encode("UTF-8"), pdf_stream, encoding="UTF-8"
-        )
+# def printInvoice(request):
+#     if request.method == "GET":
+#         # Extract data from GET request
+#         data = {
+#             "firstName": request.GET.get("firstName"),
+#             "lastName": request.GET.get("lastName"),
+#             "age": request.GET.get("age"),
+#             "address": request.GET.get("address"),
+#             "city": request.GET.get("city"),
+#             "state": request.GET.get("state"),
+#             "zipcode": request.GET.get("zipcode"),
+#             "phone": request.GET.get("phone"),
+#             "TotalBill": request.GET.get("TotalBill"),
+#             "AmountPaid": request.GET.get("AmountPaid"),
+#             "PlotType": request.GET.get("PlotType"),
+#             "logo_path": f"{BASE_DIR}/static/logo.png" 
+#         }
+#         data['pendingAmount'] = int(data['TotalBill']) - int(data['AmountPaid'])
+#         # Load the HTML template
+#         template = get_template(f'{BASE_DIR}/templates/invtemplate.html')
+#         html_content = template.render(data)
 
-        # Check for errors and return response
-        if pisa_status.err:
-            return HttpResponse("An error occurred while generating the PDF.", status=500)
+#         # Generate the PDF
+#         pdf_stream = BytesIO()
+#         # Create PDF with A4 size
+#         pisa_status = pisa.CreatePDF(
+#             html_content.encode("UTF-8"), pdf_stream, encoding="UTF-8"
+#         )
 
-        # Return the PDF as an HTTP response
-        response = HttpResponse(pdf_stream.getvalue(), content_type="application/pdf")
-        response["Content-Disposition"] = f'attachment; filename="Invoice_{data["firstName"]}_{data["lastName"]}.pdf"'
-        return response
+#         # Check for errors and return response
+#         if pisa_status.err:
+#             return HttpResponse("An error occurred while generating the PDF.", status=500)
 
-    return HttpResponse("Invalid request")
+#         # Return the PDF as an HTTP response
+#         response = HttpResponse(pdf_stream.getvalue(), content_type="application/pdf")
+#         response["Content-Disposition"] = f'attachment; filename="Invoice_{data["firstName"]}_{data["lastName"]}.pdf"'
+#         return response
+
+#     return HttpResponse("Invalid request")

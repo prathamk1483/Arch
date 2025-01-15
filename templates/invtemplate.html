@@ -18,8 +18,8 @@ body {
 }
 
 .logo {
-  width: 200px;
-  height: 250px;
+  width: 150px;
+  height: 200px;
 }
 
 .invoice-info {
@@ -68,13 +68,16 @@ th {
   text-align: center;
   margin-top: 20px;
 }
+.bocks{
+  display: block;border: 2px solid rgb(138, 138, 138); margin : 5px auto 0 auto;height: 250px; width :70%;
+}
 </style>
 </head>
 <body>
 
 <div class="container">
   <div class="header">
-    <img src="{{logo_path}}" alt="Orconix India Logo" class="logo">
+    <img src="../static/logo.png" alt="Orconix India Logo" class="logo">
     <h1>Invoice</h1>
     <p>Invoice #: {{invoiceNumber}}</p>
     <p>Created: January 1, 2023</p>
@@ -124,11 +127,27 @@ th {
       </tbody>
     </table>
   </div>
-
+  <div class="bocks">
+    <p style="font-size: 50px;color: #d2d2d2; text-align: center;padding-bottom: 80px;">
+      write your content here
+    </p>
+      
+  </div>
   <div class="footer">
     <p>Thank you for your business!</p>
   </div>
 </div>
 
+<button class="printButton"onclick="printPage()">
+  PRINT INVOICE
+</button>
+
+<script>
+  function printPage() {
+    document.getElementsByClassName('printButton')[0].style.display = 'none';
+    window.print();
+    document.getElementsByClassName('printButton')[0].style.display = 'block';
+  }
+</script>
 </body>
 </html>
